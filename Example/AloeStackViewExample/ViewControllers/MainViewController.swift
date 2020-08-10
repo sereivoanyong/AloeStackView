@@ -16,9 +16,15 @@
 import AloeStackView
 import UIKit
 
-public class MainViewController: AloeStackViewController {
+public class MainViewController: UIViewController {
 
   // MARK: Public
+
+  public let stackView = StackScrollView()
+
+  public override func loadView() {
+    view = stackView
+  }
 
   public override func viewDidLoad() {
     super.viewDidLoad()
@@ -34,7 +40,7 @@ public class MainViewController: AloeStackViewController {
   }
 
   private func setUpStackView() {
-    stackView.automaticallyHidesLastSeparator = true
+    // stackView.automaticallyHidesLastSeparator = true
   }
 
   private func setUpRows() {
@@ -81,14 +87,10 @@ public class MainViewController: AloeStackViewController {
       bottom: stackView.rowInset.bottom,
       right: stackView.rowInset.right)
 
-    let separatorInset = UIEdgeInsets(
-      top: 0,
-      left: stackView.separatorInset.left * 2,
-      bottom: 0,
-      right: 0)
+    // let separatorInset = UIEdgeInsets(top: 0, left: stackView.separatorInset.left * 2, bottom: 0, right: 0)
 
     stackView.setInset(forRows: hiddenRows, inset: rowInset)
-    stackView.setSeparatorInset(forRows: Array(hiddenRows.dropLast()), inset: separatorInset)
+    // stackView.setSeparatorInset(forRows: Array(hiddenRows.dropLast()), inset: separatorInset)
   }
 
   private func setUpExpandingRowView() {
@@ -102,7 +104,7 @@ public class MainViewController: AloeStackViewController {
     titleLabel.numberOfLines = 0
     titleLabel.text = "Use a horizontal layout"
     stackView.addRow(titleLabel)
-    stackView.hideSeparator(forRow: titleLabel)
+    // stackView.hideSeparator(forRow: titleLabel)
     stackView.setInset(forRow: titleLabel, inset: UIEdgeInsets(
       top: stackView.rowInset.top,
       left: stackView.rowInset.left,
@@ -115,16 +117,16 @@ public class MainViewController: AloeStackViewController {
     captionLabel.numberOfLines = 0
     captionLabel.text = "(Try scrolling horizontally!)"
     stackView.addRow(captionLabel)
-    stackView.hideSeparator(forRow: captionLabel)
+    // stackView.hideSeparator(forRow: captionLabel)
     stackView.setInset(forRow: captionLabel, inset: UIEdgeInsets(
       top: 0,
       left: stackView.rowInset.left,
       bottom: stackView.rowInset.bottom,
       right: stackView.rowInset.right))
 
-    let horizontalStackView = AloeStackView()
+    let horizontalStackView = StackScrollView()
     horizontalStackView.axis = .horizontal
-    horizontalStackView.hidesSeparatorsByDefault = true
+    // horizontalStackView.hidesSeparatorsByDefault = true
     horizontalStackView.showsHorizontalScrollIndicator = false
 
     horizontalStackView.contentInset = UIEdgeInsets(
@@ -173,7 +175,7 @@ public class MainViewController: AloeStackViewController {
     titleLabel.numberOfLines = 0
     titleLabel.text = "Handle user interaction"
     stackView.addRow(titleLabel)
-    stackView.hideSeparator(forRow: titleLabel)
+    // stackView.hideSeparator(forRow: titleLabel)
     stackView.setInset(forRow: titleLabel, inset: UIEdgeInsets(
       top: stackView.rowInset.top,
       left: stackView.rowInset.left,
@@ -186,7 +188,7 @@ public class MainViewController: AloeStackViewController {
     captionLabel.numberOfLines = 0
     captionLabel.text = "(Try tapping on the photo!)"
     stackView.addRow(captionLabel)
-    stackView.hideSeparator(forRow: captionLabel)
+    // stackView.hideSeparator(forRow: captionLabel)
     stackView.setInset(forRow: captionLabel, inset: UIEdgeInsets(
       top: 0,
       left: stackView.rowInset.left,

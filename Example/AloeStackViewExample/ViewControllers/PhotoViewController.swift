@@ -16,9 +16,15 @@
 import AloeStackView
 import UIKit
 
-public class PhotoViewController: AloeStackViewController {
+public class PhotoViewController: UIViewController {
 
   // MARK: Public
+
+  public let stackView = StackScrollView()
+
+  public override func loadView() {
+    view = stackView
+  }
 
   public override func viewDidLoad() {
     super.viewDidLoad()
@@ -34,7 +40,7 @@ public class PhotoViewController: AloeStackViewController {
   }
 
   private func setUpStackView() {
-    stackView.hidesSeparatorsByDefault = true
+    // stackView.automaticallyHidesLastSeparator = true
   }
 
   private func setUpRows() {

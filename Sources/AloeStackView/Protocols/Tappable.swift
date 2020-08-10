@@ -23,9 +23,8 @@
  * This notification can be used to implement default behavior in a view that should always happen
  * when that view is tapped.
  */
-public protocol Tappable {
-
+public protocol Tappable: AnyObject {
+  
   /// Called when the row is tapped by the user.
   func didTapView()
-
 }
