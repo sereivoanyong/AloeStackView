@@ -24,6 +24,14 @@ open class StackScrollViewCell: UIView {
   
   // MARK: Lifecycle
   
+  public convenience init(contentView: UIView, accessoryView: UIView?) {
+    self.init(contentView: contentView)
+    
+    defer {
+      self.accessoryView = accessoryView
+    }
+  }
+  
   public init(contentView: UIView) {
     self.contentView = contentView
     
@@ -72,6 +80,34 @@ open class StackScrollViewCell: UIView {
   // MARK: Public
   
   public let contentView: UIView
+  
+  open var accessoryView: UIView? {
+    didSet {
+      guard accessoryView != oldValue else {
+        return
+      }
+      oldValue?.removeFromSuperview()
+      if let accessoryView = accessoryView {
+        accessoryView.setContentCompressionResistancePriority(.required, for: .horizontal)
+        accessoryView.setContentHuggingPriority(.required, for: .horizontal)
+        accessoryView.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(accessoryView)
+        
+        contentEdgeConstraints[3].isActive = false
+        contentEdgeConstraints[3] = accessoryView.leftAnchor.constraint(equalTo: contentView.rightAnchor, constant: 8)
+        
+        NSLayoutConstraint.activate([
+          contentEdgeConstraints[3],
+          accessoryView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+          layoutMarginsGuide.rightAnchor.constraint(equalTo: accessoryView.rightAnchor),
+        ])
+      } else {
+        contentEdgeConstraints[3].isActive = false
+        contentEdgeConstraints[3] = layoutMarginsGuide.trailingAnchor.constraint(equalTo: contentView.trailingAnchor)
+        contentEdgeConstraints[3].isActive = true
+      }
+    }
+  }
   
   /// Edge constraints (top, left, bottom, right) of `contentView`
   open private(set) var contentEdgeConstraints: [NSLayoutConstraint]!
