@@ -86,15 +86,15 @@ open class StackScrollView: UIScrollView {
   /// Adds a row to the end of the stack view.
   ///
   /// If `animated` is `true`, the insertion is animated.
-  open func addRow(_ row: UIView, configurationHandler: ((StackScrollViewCell) -> Void)? = nil, animated: Bool = false) {
-    insertCell(contentView: row, configurationHandler: configurationHandler, atIndex: stackView.arrangedSubviews.count, animated: animated)
+  open func addRow(_ row: UIView, options: StackScrollViewCell.Options = .default, configurationHandler: ((StackScrollViewCell) -> Void)? = nil, animated: Bool = false) {
+    insertCell(contentView: row, options: options, configurationHandler: configurationHandler, atIndex: stackView.arrangedSubviews.count, animated: animated)
   }
   
   /// Adds multiple rows to the end of the stack view.
   ///
   /// If `animated` is `true`, the insertions are animated.
-  open func addRows(_ rows: [UIView], configurationHandler: ((StackScrollViewCell) -> Void)? = nil, animated: Bool = false) {
-    rows.forEach { addRow($0, configurationHandler: configurationHandler, animated: animated) }
+  open func addRows(_ rows: [UIView], options: StackScrollViewCell.Options = .default, configurationHandler: ((StackScrollViewCell) -> Void)? = nil, animated: Bool = false) {
+    rows.forEach { addRow($0, options: options, configurationHandler: configurationHandler, animated: animated) }
   }
   
   /// Adds a row to the beginning of the stack view.
@@ -351,8 +351,8 @@ open class StackScrollView: UIScrollView {
   /// may be overwritten by default values after the cell is returned. To customize the values of
   /// properties of the cell, override `configureCell(_:)` and perform the customization there,
   /// rather than on the cell returned from this method.
-  open func cellForRow(_ row: UIView) -> StackScrollViewCell {
-    return StackScrollViewCell(contentView: row)
+  open func cellForRow(_ row: UIView, options: StackScrollViewCell.Options = .default) -> StackScrollViewCell {
+    return StackScrollViewCell(contentView: row, options: options)
   }
   
   /// Allows subclasses to configure the properties of the given `StackViewCell`.
@@ -377,8 +377,8 @@ open class StackScrollView: UIScrollView {
     stackViewAxisConstraint?.isActive = true
   }
   
-  private func createCell(contentView: UIView) -> StackScrollViewCell {
-    let cell = cellForRow(contentView)
+  private func createCell(contentView: UIView, options: StackScrollViewCell.Options) -> StackScrollViewCell {
+    let cell = cellForRow(contentView, options: options)
     
     cell.preservesSuperviewLayoutMargins = insetsCellToLayoutMargins
     cell.rowBackgroundColor = rowBackgroundColor
@@ -390,10 +390,10 @@ open class StackScrollView: UIScrollView {
     return cell
   }
   
-  private func insertCell(contentView: UIView, configurationHandler: ((StackScrollViewCell) -> Void)? = nil, atIndex index: Int, animated: Bool) {
+  private func insertCell(contentView: UIView, options: StackScrollViewCell.Options = .default, configurationHandler: ((StackScrollViewCell) -> Void)? = nil, atIndex index: Int, animated: Bool) {
     let cellToRemove = containsRow(contentView) ? contentView.superview : nil
     
-    let cell = createCell(contentView: contentView)
+    let cell = createCell(contentView: contentView, options: options)
     configurationHandler?(cell)
     stackView.insertArrangedSubview(cell, at: index)
     

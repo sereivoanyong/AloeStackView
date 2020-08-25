@@ -20,22 +20,35 @@ import UIKit
  */
 open class StackScrollViewCell: UIView {
   
+  public struct Options {
+    
+    public var insetsReference: InsetsReference
+    public var overrideHeight: CGFloat?
+    
+    public init(insetsReference: InsetsReference = .layoutMargins, overrideHeight: CGFloat? = nil) {
+      self.insetsReference = insetsReference
+      self.overrideHeight = overrideHeight
+    }
+    
+    public static var `default`: Self {
+      return .init()
+    }
+  }
+  
+  public enum InsetsReference {
+    
+    case none
+    case layoutMargins
+  }
+  
   private var tapGestureRecognizer: UITapGestureRecognizer!
   
   // MARK: Lifecycle
   
-  public convenience init(contentView: UIView, accessoryView: UIView?) {
-    self.init(contentView: contentView)
-    
-    defer {
-      self.accessoryView = accessoryView
-    }
-  }
-  
-  public init(contentView: UIView) {
+  public init(contentView: UIView, options: Options = .default) {
     self.contentView = contentView
-    
     super.init(frame: .zero)
+    
     translatesAutoresizingMaskIntoConstraints = false
     if #available(iOS 11.0, *) {
       insetsLayoutMarginsFromSafeArea = false
@@ -45,14 +58,28 @@ open class StackScrollViewCell: UIView {
     contentView.translatesAutoresizingMaskIntoConstraints = false
     addSubview(contentView)
     
-    contentEdgeConstraints = [
-      contentView.topAnchor.constraint(equalTo: layoutMarginsGuide.topAnchor),
-      contentView.leadingAnchor.constraint(equalTo: layoutMarginsGuide.leadingAnchor),
-      layoutMarginsGuide.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-      layoutMarginsGuide.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-    ]
-    contentEdgeConstraints[2].priority = UILayoutPriority.required - 1
+    switch options.insetsReference {
+    case .none:
+      contentEdgeConstraints = [
+        contentView.topAnchor.constraint(equalTo: topAnchor),
+        contentView.leadingAnchor.constraint(equalTo: leadingAnchor),
+        bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+        trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+      ]
+    case .layoutMargins:
+      contentEdgeConstraints = [
+        contentView.topAnchor.constraint(equalTo: layoutMarginsGuide.topAnchor),
+        contentView.leadingAnchor.constraint(equalTo: layoutMarginsGuide.leadingAnchor),
+        layoutMarginsGuide.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+        layoutMarginsGuide.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+      ]
+    }
+    contentEdgeConstraints[2].priority = .required - 1
     NSLayoutConstraint.activate(contentEdgeConstraints)
+    
+    if let overrideHeight = options.overrideHeight {
+      heightAnchor.constraint(equalToConstant: overrideHeight).isActive = true
+    }
     
     if contentView is Tappable {
       tapGestureRecognizer = UITapGestureRecognizer()
