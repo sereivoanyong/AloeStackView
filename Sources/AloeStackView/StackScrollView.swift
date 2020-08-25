@@ -49,6 +49,7 @@ open class StackScrollView: UIScrollView {
   
   // MARK: Configuring AloeStackView
   
+  /// `arrangedSubviews` must not be modified directly.
   public let stackView = UIStackView()
   
   /// Edge constraints (top, left, bottom, right) of `stackView`
@@ -85,15 +86,15 @@ open class StackScrollView: UIScrollView {
   /// Adds a row to the end of the stack view.
   ///
   /// If `animated` is `true`, the insertion is animated.
-  open func addRow(_ row: UIView, animated: Bool = false) {
-    insertCell(contentView: row, atIndex: stackView.arrangedSubviews.count, animated: animated)
+  open func addRow(_ row: UIView, configurationHandler: ((StackScrollViewCell) -> Void)? = nil, animated: Bool = false) {
+    insertCell(contentView: row, configurationHandler: configurationHandler, atIndex: stackView.arrangedSubviews.count, animated: animated)
   }
   
   /// Adds multiple rows to the end of the stack view.
   ///
   /// If `animated` is `true`, the insertions are animated.
-  open func addRows(_ rows: [UIView], animated: Bool = false) {
-    rows.forEach { addRow($0, animated: animated) }
+  open func addRows(_ rows: [UIView], configurationHandler: ((StackScrollViewCell) -> Void)? = nil, animated: Bool = false) {
+    rows.forEach { addRow($0, configurationHandler: configurationHandler, animated: animated) }
   }
   
   /// Adds a row to the beginning of the stack view.
@@ -194,14 +195,8 @@ open class StackScrollView: UIScrollView {
   /// Returns an array containing of all the rows in the stack view.
   ///
   /// The rows in the returned array are in the order they appear visually in the stack view.
-  open func getAllRows() -> [UIView] {
-    var rows: [UIView] = []
-    stackView.arrangedSubviews.forEach { cell in
-      if let cell = cell as? StackScrollViewCell {
-        rows.append(cell.contentView)
-      }
-    }
-    return rows
+  open func rows() -> [UIView] {
+    return (stackView.arrangedSubviews as! [StackScrollViewCell]).map { $0.contentView }
   }
   
   /// Returns `true` if the given row is present in the stack view, `false` otherwise.
@@ -395,10 +390,11 @@ open class StackScrollView: UIScrollView {
     return cell
   }
   
-  private func insertCell(contentView: UIView, atIndex index: Int, animated: Bool) {
+  private func insertCell(contentView: UIView, configurationHandler: ((StackScrollViewCell) -> Void)? = nil, atIndex index: Int, animated: Bool) {
     let cellToRemove = containsRow(contentView) ? contentView.superview : nil
     
     let cell = createCell(contentView: contentView)
+    configurationHandler?(cell)
     stackView.insertArrangedSubview(cell, at: index)
     
     if let cellToRemove = cellToRemove as? StackScrollViewCell {
