@@ -78,6 +78,8 @@ open class StackScrollView: UIScrollView {
     }
   }
   
+  open var insetsCellToLayoutMargins: Bool = false
+  
   // MARK: Adding and Removing Rows
   
   /// Adds a row to the end of the stack view.
@@ -383,6 +385,7 @@ open class StackScrollView: UIScrollView {
   private func createCell(contentView: UIView) -> StackScrollViewCell {
     let cell = cellForRow(contentView)
     
+    cell.preservesSuperviewLayoutMargins = insetsCellToLayoutMargins
     cell.rowBackgroundColor = rowBackgroundColor
     cell.rowHighlightColor = rowHighlightColor
     cell.layoutMargins = rowInset
